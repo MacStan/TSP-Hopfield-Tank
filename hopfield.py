@@ -1,6 +1,7 @@
 from math import tanh
 import random
 
+
 class HopfieldNet:
     def __init__(self, matrix):
 
@@ -22,9 +23,9 @@ class HopfieldNet:
         for x in range(0, self.size):
             row = []
             for y in range(0, self.size):
-                row.append( (1 / self.size ** 2)
-                            + random.uniform(-0.1,0.1)
-                            )
+                row.append((1 / self.size ** 2)
+                           + random.uniform(-0.1, 0.1)
+                           )
             init.append(row)
         return init
 
@@ -59,7 +60,7 @@ class HopfieldNet:
     def get_d(self, mainCity, position):
         sum = 0.0
         for city in range(0, self.size):
-            minPos = self.size - 1 if position - 1 < 0else position - 1
+            minPos = self.size - 1 if position - 1 < 0 else position - 1
             maxPos = 0 if position + 1 >= self.size else position + 1
             sum += self.distances[mainCity][city] \
                    * (self.activation(self.inputs[city][minPos])
