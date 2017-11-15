@@ -1,7 +1,7 @@
 # TSP-Hopfield-Tank
 Implementation of Hopfield-Tank model for TSP. Project for my University Course.
 
-**Current version is not converging to feasible solutions. **
+**Current version is not converging to feasible solutions.**
 Look up page 16, second paragraph in following paper:
 http://www.iro.umontreal.ca/~dift6751/paper_potvin_nn_tsp.pdf
 
