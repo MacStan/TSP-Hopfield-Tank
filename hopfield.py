@@ -19,21 +19,20 @@ class HopfieldNet:
         self.inputs = self.init_inputs()
 
     def init_inputs(self):
+        base = 1 / (self.size ** 2)
         init = []
         for x in range(0, self.size):
             row = []
             for y in range(0, self.size):
-                row.append((1 / self.size ** 2)
-                           + random.uniform(-0.1, 0.1)
-                           )
+                row.append(base + random.uniform(-base / 10, base / 10))
             init.append(row)
         return init
 
     def activation(self, input):
-        return 0.5 * (1 + tanh(input / self.u0))
-        # activ = 0 if sigm < 0.2 else sigm
-        # activ = 1 if sigm > 0.8 else activ
-        # return sigm;
+        sigm = 0.5 * (1 + tanh(input / self.u0))
+        activ = 0 if sigm < 0.2 else sigm
+        activ = 1 if sigm > 0.8 else activ
+        return sigm;
 
     def get_a(self, city, position):
         sum = 0.0
@@ -53,28 +52,26 @@ class HopfieldNet:
         sum = 0.0
         for city in range(0, self.size):
             for pos in range(0, self.size):
-                self.activation(self.inputs[city][pos])
-        sum -= self.size
+                sum += self.activation(self.inputs[city][pos])
+        sum -= self.size + 5
         return sum * self.c
 
     def get_d(self, mainCity, position):
         sum = 0.0
         for city in range(0, self.size):
-            minPos = self.size - 1 if position - 1 < 0 else position - 1
-            maxPos = 0 if position + 1 >= self.size else position + 1
             sum += self.distances[mainCity][city] \
-                   * (self.activation(self.inputs[city][minPos])
-                      + self.activation(self.inputs[city][maxPos]))
+                   * (self.activation(self.inputs[city][(position + 1) % self.size])
+                      + self.activation(self.inputs[city][(position - 1) % self.size]))
 
         return sum * self.d
 
     def get_new_state(self, city, pos):
-        newState = -self.inputs[city][pos]
-        newState -= self.get_a(city, pos)
-        newState -= self.get_b(city, pos)
-        newState -= self.get_c()
-        newState -= self.get_d(pos, city)
-        return newState
+        new_state = -self.inputs[city][pos]
+        new_state -= self.get_a(city, pos)
+        new_state -= self.get_b(city, pos)
+        new_state -= self.get_c()
+        new_state -= self.get_d(city, pos)
+        return new_state
 
     def update(self):
         statesChange = []
@@ -94,7 +91,19 @@ class HopfieldNet:
         for x in range(0, self.size):
             row = []
             for y in range(0, self.size):
-                row.append("{0:.1f}".format(self.activation(self.inputs[x][y])))
+                act = self.activation(self.inputs[x][y])
+                sign = "X" if act > 0.75 else "_"
+                row.append(sign)
+            activations.append(f"{x}# " + " ".join(row))
+
+        return "\n".join(activations)
+
+    def inputs_printable(self):
+        activations = []
+        for x in range(0, self.size):
+            row = []
+            for y in range(0, self.size):
+                row.append(str(f"{self.inputs[x][y]:.2f}"))
             activations.append(" ".join(row))
 
         return "\n".join(activations)

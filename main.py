@@ -18,8 +18,11 @@ normalized_distances = normalize(distances)
 
 net = HopfieldNet(normalized_distances)
 
-for step in range(0,10000):
+for step in range(0, 10000):
     net.update()
     if step % 100 == 0:
-        print(net.activations_printable() + "\n\n") 
+        print(step)
+        print(net.activations_printable() )
+        print("## 0 1 2 3 4 5 6 7 8 9 "+ "\n\n")
+        print(net.inputs_printable() + "\n\n")
 
