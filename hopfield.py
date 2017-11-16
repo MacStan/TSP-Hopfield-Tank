@@ -107,3 +107,21 @@ class HopfieldNet:
             activations.append(" ".join(row))
 
         return "\n".join(activations)
+
+    def encoded_path_valid(self):
+        for x in range(0, self.size):
+            counter = 0.0
+            for y in range(0, self.size):
+                counter += self.activation(self.inputs[x][y])
+            self.activations_vector_validity("x",x,counter)
+        for y in range(0, self.size):
+            counter = 0.0
+            for x in range(0, self.size):
+                counter += self.activation(self.inputs[x][y])
+            self.activations_vector_validity("y", y, counter)
+
+    def activations_vector_validity(self, cord, cord_pos, counter):
+        if counter <= 0.0:
+            print(f"FAIL, sum les or equal zero. {cord}:{cord_pos} sum: {counter}")
+        if counter > 1.0:
+            print(f"FAIL, sum greater than one. {cord}:{cord_pos} sum: {counter}")

@@ -22,7 +22,10 @@ for step in range(0, 10000):
     net.update()
     if step % 100 == 0:
         print(step)
-        print(net.activations_printable() )
-        print("## 0 1 2 3 4 5 6 7 8 9 "+ "\n\n")
+        path = net.activations_printable()
+        print( path)
+        print("## 0 1 2 3 4 5 6 7 8 9 ")
+        net.encoded_path_valid()
+        print()
         print(net.inputs_printable() + "\n\n")
 
