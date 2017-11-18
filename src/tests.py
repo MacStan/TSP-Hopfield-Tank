@@ -1,11 +1,15 @@
-import unittest
-import input
-import hopfield
 import math
+import unittest
+
+import hopfield
+
+from src import input
+
+
 class TestInput(unittest.TestCase):
 
     def test_three_points(self):
-        matrix = input.distance_matrix([(0,0),(0,2),(4,0)])
+        matrix = input.distance_matrix([(0, 0), (0, 2), (4, 0)])
         self.assertAlmostEqual(matrix[0][0], 0.0)
         self.assertAlmostEqual(matrix[0][1], 2.0)
         self.assertAlmostEqual(matrix[0][2], 4.0)
@@ -19,7 +23,7 @@ class TestInput(unittest.TestCase):
         self.assertAlmostEqual(matrix[2][2], 0.0)
 
     def test_four_points(self):
-        matrix = input.distance_matrix([(1,3), (2,1), (4,4),(6,2)])
+        matrix = input.distance_matrix([(1, 3), (2, 1), (4, 4), (6, 2)])
 
         self.assertAlmostEqual(matrix[0][0], 0.0)
         self.assertAlmostEqual(matrix[0][1], 2.23,1)
