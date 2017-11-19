@@ -20,7 +20,7 @@ class HopfieldNet:
 
         self.inputs = self.init_inputs()
         self.logger = lg.getLogger('HopfieldNet')
-        lg.basicConfig(filename=f'example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
+        lg.basicConfig(filename=f'./logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
                        level=lg.INFO)
 
     def init_inputs(self):
@@ -65,7 +65,7 @@ class HopfieldNet:
         sum = 0.0
         for city in range(0, self.size):
             preceding = self.activation(self.inputs[city][(position + 1) % self.size])
-            following = self.activation(self.inputs[city][(position - 1) % self.size])
+            following = self.activation(self.inputs[city][(position - 1) ])
             sum += self.distances[mainCity][city] * (preceding + following)
 
         return sum * self.d
