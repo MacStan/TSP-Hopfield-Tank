@@ -91,6 +91,16 @@ class HopfieldNet:
             for pos in range(0, self.size):
                 self.inputs[city][pos] += statesChange[city][pos]
 
+    def activations(self):
+        activations = []
+        for x in range(0, self.size):
+            row = []
+            for y in range(0, self.size):
+                act = self.activation(self.inputs[x][y])
+                row.append(act)
+            activations.append(row)
+        return activations
+
     def activations_printable(self):
         activations = []
         for x in range(0, self.size):
