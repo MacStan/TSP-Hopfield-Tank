@@ -8,6 +8,7 @@ class HopfieldNet:
     def __init__(self, matrix):
 
         # values taken from paper
+        self.statesChange = []
         self.a = 500
         self.b = 500
         self.c = 200
@@ -62,16 +63,16 @@ class HopfieldNet:
         sum -= self.size
         return sum * self.c
 
-    def get_d(self, mainCity, position):
+    def get_d(self, main_city, position):
         sum = 0.0
         for city in range(0, self.size):
             preceding = self.activation(self.inputs[city][(position + 1) % self.size])
             following = self.activation(self.inputs[city][(position - 1)])
-            sum += self.distances[mainCity][city] * (preceding + following)
+            sum += self.distances[main_city][city] * (preceding + following)
 
         return sum * self.d
 
-    def get_new_state(self, city, pos):
+    def get_states_change(self, city, pos):
         new_state = -self.inputs[city][pos]
         new_state -= self.get_a(city, pos)
         new_state -= self.get_b(city, pos)
@@ -80,17 +81,17 @@ class HopfieldNet:
         return new_state
 
     def update(self):
-        statesChange = []
+        self.statesChange = []
 
         for city in range(0, self.size):
             row = []
             for pos in range(0, self.size):
-                row.append(self.timestep * self.get_new_state(city, pos))
-            statesChange.append(row)
+                row.append(self.timestep * self.get_states_change(city, pos))
+            self.statesChange.append(row)
 
         for city in range(0, self.size):
             for pos in range(0, self.size):
-                self.inputs[city][pos] += statesChange[city][pos]
+                self.inputs[city][pos] += self.statesChange[city][pos]
 
     def activations(self):
         activations = []
