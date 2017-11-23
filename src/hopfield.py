@@ -5,7 +5,7 @@ import datetime as dt
 
 
 class HopfieldNet:
-    def __init__(self, matrix):
+    def __init__(self, matrix, seed):
 
         # values taken from paper
         self.statesChange = []
@@ -18,7 +18,9 @@ class HopfieldNet:
         self.timestep = 0.000001
         self.distances = matrix
         self.size = len(matrix)
+        self.size_adj = 0
 
+        self.seed = seed
         self.inputs = self.init_inputs()
         self.logger = lg.getLogger('HopfieldNet')
         lg.basicConfig(
@@ -26,6 +28,7 @@ class HopfieldNet:
             level=lg.INFO)
 
     def init_inputs(self):
+        random.seed(self.seed)
         base = 1 / (self.size ** 2)
         init = []
         for x in range(0, self.size):
@@ -60,7 +63,7 @@ class HopfieldNet:
         for city in range(0, self.size):
             for pos in range(0, self.size):
                 sum += self.activation(self.inputs[city][pos])
-        sum -= self.size
+        sum -= self.size + self.size_adj
         return sum * self.c
 
     def get_d(self, main_city, position):
@@ -92,6 +95,7 @@ class HopfieldNet:
         for city in range(0, self.size):
             for pos in range(0, self.size):
                 self.inputs[city][pos] += self.statesChange[city][pos]
+        pass
 
     def activations(self):
         activations = []
