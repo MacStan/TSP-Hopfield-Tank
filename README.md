@@ -1,9 +1,9 @@
 # TSP-Hopfield-Tank
 
-
-##Contents
-*Hopfield-Tank network
-*'Heatmap image' generation and 'Heatmap over time' video generation (very usefull for debuging)
+## Contents
+* Hopfield-Tank network
+* 'Heatmap image' generation for given step
+* 'Heatmap over time' video generation (very usefull for debuging)
 
 ## Theoretical remarks
 Implementation of Hopfield-Tank model for TSP. Project for my University Course.
