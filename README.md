@@ -4,7 +4,7 @@
 ##Contents
 *Hopfield-Tank network
 *'Heatmap image' generation and 'Heatmap over time' video generation (very usefull for debuging)
-
+![Alt Text](https://github.com/MacStan/TSP-Hopfield-Tank/res/output.gif)
 ## Theoretical remarks
 Implementation of Hopfield-Tank model for TSP. Project for my University Course.
 
