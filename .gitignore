@@ -9,3 +9,4 @@ src/__pycache__*
 .idea*
 src/plots/*
 src/logs/*
+plots/*
