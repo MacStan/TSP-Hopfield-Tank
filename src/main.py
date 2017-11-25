@@ -1,28 +1,12 @@
-from src.hopfield import HopfieldNet
+from hopfield import HopfieldNet
 import matplotlib.pyplot as plt
-from src.input import distance_matrix, normalize
+from input import distance_matrix, normalize, read_data
 import subprocess as sp
 import datetime as dt
 import os
 import time
 
-
-burma14 = [
-    # (16.47, 96.10),
-    # (16.47, 94.44),
-    (20.09, 92.54),
-    (22.39, 93.37),
-    # (25.23, 97.24),
-    (22.00, 96.05),
-    (20.47, 97.02),
-    (17.20, 96.29),
-    (16.30, 97.38),
-    # (14.05, 98.12),
-    (16.53, 97.38),
-    (21.52, 95.59),
-    (19.41, 97.13),
-    (20.09, 94.55)]
-
+burma14 = read_data("./input_data/burma14.txt")
 distances = distance_matrix(burma14)
 normalized_distances = normalize(distances)
 for seed in range(0, 5):
@@ -50,7 +34,7 @@ for seed in range(0, 5):
         if step % freq == 0:
             acts = net.activations()
 
-            fig = plt.figure(figsize=(30, 10),dpi=50)
+            fig = plt.figure(figsize=(30, 10), dpi=50)
             a = fig.add_subplot(1, 3, 1)
             plt.imshow(acts, cmap='hot', vmin=0, vmax=1, interpolation='nearest')
             plt.title(f"Activations {img * freq}")
