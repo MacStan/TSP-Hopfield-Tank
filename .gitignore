@@ -10,3 +10,4 @@ src/__pycache__*
 src/plots/*
 src/logs/*
 plots/*
+data/*
