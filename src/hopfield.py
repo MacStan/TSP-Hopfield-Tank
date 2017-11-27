@@ -5,7 +5,7 @@ import datetime as dt
 
 
 class HopfieldNet:
-    def __init__(self, matrix, seed):
+    def __init__(self, matrix, seed, size_adj):
 
         # values taken from paper
         self.inputsChange = []
@@ -18,7 +18,7 @@ class HopfieldNet:
         self.timestep = 0.000001
         self.distances = matrix
         self.size = len(matrix)
-        self.size_adj = 0
+        self.size_adj = size_adj
 
         self.seed = seed
         self.inputs = self.init_inputs()

@@ -1,8 +1,7 @@
 from plotter import Plotter
 from hopfield import HopfieldNet
-from input import distance_matrix, normalize, read_data, normalize_cords
-from args_parse import get_args
 from data_storage import DataStorage
+from input import distance_matrix, normalize, normalize_cords
 import subprocess as sp
 import datetime as dt
 import os
@@ -10,7 +9,7 @@ import time
 import sys
 
 
-def generate_images(new_path, seed, dataPointRange, freq, cords):
+def generate_images(new_path, seed, dataPointRange, freq, cords, dataStorage):
     print("Generating images!")
 
     for dataPointIndex in range(0, dataPointRange):
@@ -48,40 +47,40 @@ def plot_data_point(new_path, netConfiguration, netState, imgIndex, freq, cords)
         f"{new_path}\img{imgIndex}.png")
 
 
-burma14 = read_data("./input_data/burma14.txt")
-distances = distance_matrix(burma14)
-normalized_distances = normalize(distances)
-normalized_cords = normalize_cords(burma14)
-args = get_args()
-dataStorage = DataStorage()
+def run(seed, steps, size_adj, data, freq):
+    distances = distance_matrix(data)
+    normalized_distances = normalize(distances)
+    normalized_cords = normalize_cords(data)
 
-net = HopfieldNet(normalized_distances, args.seed)
+    data_storage = DataStorage()
 
-date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-new_path = f"..\\plots\\{date}-seed{args.seed}-steps{args.steps}\\"
-if not os.path.exists(new_path):
-    os.makedirs(new_path)
-    print(f"Created log directory: {new_path}")
+    net = HopfieldNet(normalized_distances, seed, size_adj)
 
-old = time.time()
-print(time.time() - old)
-dataStorage.start_new_seed(args.seed, net.get_net_configuration())
-step = 0
-img = 0
-for step in range(0, args.steps):
-    print(f"time {time.time() - old}")
+    date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
+    new_path = f"..\\plots\\{date}-seed{seed}-steps{steps}\\"
+    if not os.path.exists(new_path):
+        os.makedirs(new_path)
+        print(f"Created log directory: {new_path}")
+
     old = time.time()
-    net.update()
-    step += 1
-    print(f"Update iter: {step}")
+    print(time.time() - old)
+    data_storage.start_new_seed(seed, net.get_net_configuration())
+    step = 0
+    img = 0
+    for step in range(0, steps):
+        print(f"time {time.time() - old}")
+        old = time.time()
+        net.update()
+        step += 1
+        print(f"Update iter: {step}")
 
-    if step % args.freq == 0:
-        dataStorage.save_data_point(net.get_net_state(), img)
-        img += 1
+        if step % freq == 0:
+            data_storage.save_data_point(net.get_net_state(), img)
+            img += 1
 
-generate_images(new_path, args.seed, int(args.steps / args.freq), args.freq, normalized_cords)
-ffmpeg_command = f"ffmpeg -r 10 -i {new_path}img%d.png -vframes {args.steps/args.freq} " \
-                 f"{new_path}run.mp4"
-print(ffmpeg_command)
-sp.call(ffmpeg_command)
-open(f"{new_path}\Success", "w")
+    generate_images(new_path, seed, int(steps / freq), freq, normalized_cords, data_storage)
+    ffmpeg_command = f"ffmpeg -r 10 -i {new_path}img%d.png -vframes {int(steps/freq)} " \
+                     f"{new_path}run.mp4"
+    print(ffmpeg_command)
+    sp.call(ffmpeg_command)
+    open(f"{new_path}\Success", "w")
