@@ -41,3 +41,19 @@ def normalize(matrix):
         for y in range(0, len(matrix)):
             matrix[x][y] /= largest
     return matrix
+
+
+def normalize_cords(matrix):
+    xs = []
+    ys = []
+    for point in matrix:
+        xs.append(point[0])
+        ys.append(point[1])
+    largest_x = max(xs)
+    largest_y = max(ys)
+
+    for pos in range(0, len(matrix)):
+        xs[pos] /= largest_x
+        ys[pos] /= largest_y
+
+    return list(zip(xs, ys))

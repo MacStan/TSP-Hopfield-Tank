@@ -158,7 +158,9 @@ class HopfieldNet:
             return False
 
     def get_net_configuration(self):
-        return {"a": self.a, "b": self.b, "c": self.c, "d": self.d, "u0": self.u0, "size_adj": self.size_adj, "timestep": self.timestep}
+        return {"a": self.a, "b": self.b, "c": self.c, "d": self.d, "u0": self.u0,
+                "size_adj": self.size_adj, "timestep": self.timestep}
 
     def get_net_state(self):
-        return {"activations": self.activations(), "inputs": self.inputs, "inputsChange": self.inputsChange}
+        return {"activations": self.activations(), "inputs": self.inputs,
+                "inputsChange": self.inputsChange}
