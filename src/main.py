@@ -10,7 +10,7 @@ import time
 import sys
 
 
-def generate_images(new_path, seed, dataPointRange, freq, cords, dataStorage):
+def generate_images(new_path, seed, dataPointRange, freq, cords, dataStorage, distances):
     print("Generating images!")
 
     for dataPointIndex in range(0, dataPointRange):
@@ -19,7 +19,8 @@ def generate_images(new_path, seed, dataPointRange, freq, cords, dataStorage):
                         dataStorage.get_data_point(seed, dataPointIndex),
                         dataPointIndex,
                         freq,
-                        cords)
+                        cords,
+                        distances)
         sys.stdout.write(f"Image {dataPointIndex} out of {dataPointRange}\r")
     print("\nIt is done")
 
@@ -34,20 +35,19 @@ def get_map(acts, cords):
     return points
 
 
-def plot_data_point(new_path, netConfiguration, netState, imgIndex, freq, cords):
-    plotter = Plotter()
-    plotter.add_subplot(netState["activations"], 'hot', 0, 1, f"Activations {imgIndex * freq}")
-    plotter.add_subplot(netState["inputs"], 'coolwarm', -0.075, 0.075, f"Inputs {imgIndex * freq}")
-    plotter.add_subplot(
-        netState["inputsChange"], 'Blues_r', -0.001, 0, f"Inputs changes {imgIndex * freq}")
-    plotter.add_subplot(
-        netState["inputsChange"], 'Reds',  0,0.001, f"Inputs changes {imgIndex * freq}")
-    plotter.add_graph(get_map(netState["activations"], cords))
+def plot_data_point(new_path, net_conf, net_state, imgIndex, freq, cords, distances):
+    plotter = Plotter(6)
+    plotter.add_subplot(net_state["activations"], 'hot', 0, 1, f"Activations")
+    plotter.add_subplot(net_state["inputs"], 'coolwarm', -0.075, 0.075, f"Outputs of each neuron")
+    plotter.add_subplot(net_state["inputsChange"], 'Blues_r', -0.001, 0, f"Negative change")
+    plotter.add_subplot(net_state["inputsChange"], 'Reds', 0, 0.001, f"Positive change")
+    plotter.add_subplot(distances, 'plasma', 0, 1, f"Distance matrix")
+    plotter.add_graph(get_map(net_state["activations"], cords))
     plotter.plot(
-        f"seed 1; a {netConfiguration['a']}; b {netConfiguration['b']}; c {netConfiguration['c']}; "
-        f"d {netConfiguration['d']}; size_adj"
-        f" {netConfiguration['size_adj']}; u0 {netConfiguration['u0']}; "
-        f"timestep {netConfiguration['timestep']};",
+        f"a {net_conf['a']}; b {net_conf['b']}; c {net_conf['c']}; "
+        f"d {net_conf['d']}; size_adj"
+        f" {net_conf['size_adj']}; u0 {net_conf['u0']}; "
+        f"timestep {net_conf['timestep']}; Step: {imgIndex * freq}",
         f"{new_path}\img{imgIndex}.png")
 
 
@@ -83,7 +83,7 @@ def run(seed, steps, size_adj, data, freq, tag):
             img += 1
     print("\nAnnealing done!")
     print()
-    generate_images(new_path, seed, int(steps / freq), freq, normalized_cords, data_storage)
+    generate_images(new_path, seed, int(steps / freq), freq, normalized_cords, data_storage, normalized_distances )
     print()
     print("Creating video with ffmpeg")
     ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png -vframes {int(steps/freq)} " \

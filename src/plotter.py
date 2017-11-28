@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 
 
 class Plotter:
-    def __init__(self):
+    def __init__(self, subplots):
         self.fig = plt.figure(figsize=(30, 10), dpi=50)
         self.subplot = 1
-        self.expected_subplots = 5
+        self.expected_subplots = 6
 
     def add_subplot(self, points, cmap, vmin, vmax, title):
         self.fig.add_subplot(1, self.expected_subplots, self.subplot)
