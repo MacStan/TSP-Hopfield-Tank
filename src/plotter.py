@@ -18,14 +18,15 @@ class Plotter:
     def add_graph(self, points):
         splot = self.fig.add_subplot(1, self.expected_subplots, self.subplot)
         self.subplot += 1
-        if points:
+        if points and len(points) > 2:
             previous = points[0]
             for point in points[1:]:
-                splot.arrow(previous[0],
-                            previous[1],
-                            point[0] - previous[0],
-                            point[1] - previous[1],
-                            head_width=0.0, head_length=0.0, width = 0.0001, fc='k', ec='k')
+                if point[0] != previous[0] and point[1] != previous[1]:
+                    splot.arrow(previous[0],
+                                previous[1],
+                                point[0] - previous[0],
+                                point[1] - previous[1],
+                                head_width=0.0, head_length=0.0, width=0.0001, fc='k', ec='k')
                 previous = point
 
             splot.set_xlim(min([p[0] for p in points]), max([p[0] for p in points]))
