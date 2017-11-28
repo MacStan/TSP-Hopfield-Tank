@@ -11,5 +11,7 @@ def get_args():
                         help='Seed for random. Defines whole run.')
     parser.add_argument('--size-adjs', nargs='*', default=[0], type=float,
                         help='specifies value of size adjustment')
+    parser.add_argument('--tag', nargs='?', default="", type=str,
+                        help='tag added to name')
     args = parser.parse_args()
     return args

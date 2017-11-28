@@ -5,9 +5,10 @@ class Plotter:
     def __init__(self):
         self.fig = plt.figure(figsize=(30, 10), dpi=50)
         self.subplot = 1
+        self.expected_subplots = 5
 
     def add_subplot(self, points, cmap, vmin, vmax, title):
-        self.fig.add_subplot(1, 4, self.subplot)
+        self.fig.add_subplot(1, self.expected_subplots, self.subplot)
         self.subplot += 1
 
         plt.imshow(points, cmap=cmap, vmin=vmin, vmax=vmax, interpolation='nearest')
@@ -15,7 +16,7 @@ class Plotter:
         plt.colorbar()
 
     def add_graph(self, points):
-        splot = self.fig.add_subplot(1, 4, self.subplot)
+        splot = self.fig.add_subplot(1, self.expected_subplots, self.subplot)
         self.subplot += 1
         if points:
             previous = points[0]
@@ -24,7 +25,7 @@ class Plotter:
                             previous[1],
                             point[0] - previous[0],
                             point[1] - previous[1],
-                            head_width=0.0, head_length=0.0, fc='k', ec='k')
+                            head_width=0.0, head_length=0.0, width = 0.0001, fc='k', ec='k')
                 previous = point
 
             splot.set_xlim(min([p[0] for p in points]), max([p[0] for p in points]))

@@ -8,4 +8,7 @@ args = get_args()
 
 for seed in args.seeds:
     for size_adj in args.size_adjs:
-        run(seed, args.steps, size_adj, data, args.freq)
+        try:
+            run(seed, args.steps, size_adj, data, args.freq, args.tag)
+        except:
+            print("FAILURE DURING RUN")
