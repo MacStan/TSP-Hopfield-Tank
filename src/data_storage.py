@@ -6,14 +6,17 @@ from plotter import Plotter
 
 
 class DataStorage:
-    def __init__(self, storage_root_path=f"../data"):
+    """Storage creator.
+    Should be used once per given path, so for each new 'run' new DataStorage should be created."""
+
+    def __init__(self, net_conf, params):
+        self.storage_root_path = f"../data"
         timestamp = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-        self.runStoragePath = os.path.join(storage_root_path, f"{timestamp}")
+        self.runStoragePath = os.path.join(self.storage_root_path, f"{timestamp}")
         if not os.path.exists(self.runStoragePath):
             os.makedirs(self.runStoragePath)
 
-    def start_new_seed(self, seed, net_conf):
-        self.storage_path = os.path.join(self.runStoragePath, f"seed{seed}")
+        self.storage_path = os.path.join(self.runStoragePath, f"seed{params.seed}")
         if not os.path.exists(self.storage_path):
             os.makedirs(self.storage_path)
         with open(os.path.join(self.storage_path, f"net-configuration"),

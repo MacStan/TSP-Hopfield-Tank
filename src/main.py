@@ -22,7 +22,6 @@ class RunParams:
 
 def run(params: RunParams):
     data_storage, net, new_path, normalized_distances = initialize(params)
-    data_storage.start_new_seed(params.seed, net.get_net_configuration())
 
     print("\nAnnealing network")
     optimize_network(data_storage, params.freq, net, params.steps)
@@ -49,9 +48,9 @@ def initialize(params):
     print(
         f"Seed: {params.seed}; Steps: {params.steps}; Size_Adj: {params.size_adj}; Freq: {params.freq}")
     normalized_distances = normalize(distance_matrix(params.data))
-    data_storage = DataStorage()
-
     net = HopfieldNet(normalized_distances, params.seed, params.size_adj)
+    data_storage = DataStorage(net.get_net_configuration(), params)
+
     date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
     path = create_plots_path(date, params.tag, params.seed, params.steps)
     return data_storage, net, path, normalized_distances
