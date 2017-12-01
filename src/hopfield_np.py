@@ -2,13 +2,15 @@ from math import tanh
 import random
 import logging as lg
 import datetime as dt
-
+import numpy as np
 
 class HopfieldNet:
-    def __init__(self, matrix, size_adj = 0):
+    def __init__(self, distances, seed, size_adj):
 
         # values taken from paper
-        self.statesChange = []
+        self.size = len(distances)
+
+        self.inputsChange = np.zeros([self.size, self.size],float)
         self.a = 500
         self.b = 500
         self.c = 200
@@ -16,44 +18,39 @@ class HopfieldNet:
 
         self.u0 = 0.02
         self.timestep = 0.000001
-        self.distances = matrix
-        self.size = len(matrix)
+        self.distances = distances
+
         self.size_adj = size_adj
 
+        self.seed = seed
         self.inputs = self.init_inputs()
         self.logger = lg.getLogger('HopfieldNet')
         lg.basicConfig(
-            filename=f'./logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
+            filename=f'../logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
             level=lg.INFO)
 
     def init_inputs(self):
-        random.seed(123)
-        base = 1 / (self.size ** 2)
-        init = []
+        random.seed(self.seed)
+        base = np.ones([self.size, self.size], float)
+        base /= self.size ** 2
         for x in range(0, self.size):
-            row = []
             for y in range(0, self.size):
-                row.append(base + random.random() * base)
-            init.append(row)
-        return init
+                base[x][y] += ((random.random()-0.5) / 10000)
+        return base
 
     def activation(self, input):
-        sigm = 0.5 * (1 + tanh(input / self.u0))
-        activ = 0 if sigm < 0.2 else sigm
-        activ = 1 if sigm > 0.8 else activ
-        return sigm;
+        sigm = 0.5 * (1 + np.tanh(input / self.u0))
+        return sigm
 
     def get_a(self, city, position):
         sum = 0.0
-        for pos in range(0, self.size):
-            sum += self.activation(self.inputs[city][pos])
+        sum += self.activation(self.inputs[city][:])
         sum -= self.activation(self.inputs[city][position])
         return sum * self.a
 
     def get_b(self, mainCity, position):
         sum = 0.0
-        for city in range(0, self.size):
-            sum += self.activation(self.inputs[city][position])
+        sum += sum( self.activation(self.inputs[:][position]) )
         sum -= self.activation(self.inputs[mainCity][position])
         return sum * self.b
 
@@ -83,17 +80,17 @@ class HopfieldNet:
         return new_state
 
     def update(self):
-        self.statesChange = []
+        self.inputsChange = []
 
         for city in range(0, self.size):
             row = []
             for pos in range(0, self.size):
                 row.append(self.timestep * self.get_states_change(city, pos))
-            self.statesChange.append(row)
+            self.inputsChange.append(row)
 
         for city in range(0, self.size):
             for pos in range(0, self.size):
-                self.inputs[city][pos] += self.statesChange[city][pos]
+                self.inputs[city][pos] += self.inputsChange[city][pos]
         pass
 
     def activations(self):
@@ -155,3 +152,11 @@ class HopfieldNet:
             return True
         else:
             return False
+
+    def get_net_configuration(self):
+        return {"a": self.a, "b": self.b, "c": self.c, "d": self.d, "u0": self.u0,
+                "size_adj": self.size_adj, "timestep": self.timestep}
+
+    def get_net_state(self):
+        return {"activations": self.activations(), "inputs": self.inputs,
+                "inputsChange": self.inputsChange}
