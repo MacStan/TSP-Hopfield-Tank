@@ -29,7 +29,7 @@ def get_map(acts, cords):
     points = []
     for pos in range(0, len(acts)):
         for city in range(0, len(acts)):
-            if (acts[city][pos] > 0.6):
+            if acts[city][pos] > 0.6:
                 points.append(cords[city])
                 
     return points
@@ -52,35 +52,14 @@ def plot_data_point(new_path, net_conf, net_state, imgIndex, freq, cords, distan
 
 
 def run(seed, steps, size_adj, data, freq, tag):
-    print(f"Seed: {seed}; Steps: {steps}; Size_Adj: {size_adj}; Freq: {freq}")
-    distances = distance_matrix(data)
-    normalized_distances = normalize(distances)
-    normalized_cords = normalize_cords(data)
 
-    data_storage = DataStorage()
+    data_storage, net, new_path, normalized_cords, normalized_distances \
+        = initialize(data, seed, size_adj, steps, tag, freq)
 
-    net = HopfieldNet(normalized_distances, seed, size_adj)
-
-    date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-    new_path = f"..\\plots\\{date}-{str(tag)}-seed{seed}-steps{steps}\\"
-    if not os.path.exists(new_path):
-        os.makedirs(new_path)
-        print(f"Created log directory: {new_path}")
-    old = time.time()
     data_storage.start_new_seed(seed, net.get_net_configuration())
-    step = 0
-    img = 0
-    print("\nAnnealing network")
-    for step in range(0, steps):
-        formated_step = '{:>5}'.format(step)
-        sys.stdout.write(f"Step: {formated_step} Time: {time.time() - old:.2}\r")
-        old = time.time()
-        net.update()
-        step += 1
 
-        if step % freq == 0:
-            data_storage.save_data_point(net.get_net_state(), img)
-            img += 1
+    print("\nAnnealing network")
+    optimize_network(data_storage, freq, net, steps)
     print("\nAnnealing done!")
     print()
     generate_images(new_path, seed, int(steps / freq), freq, normalized_cords, data_storage, normalized_distances )
@@ -99,3 +78,30 @@ def run(seed, steps, size_adj, data, freq, tag):
         print("No video created :(")
     print("Run Ended")
     print()
+
+
+def initialize(data, seed, size_adj, steps, tag, freq):
+    print(f"Seed: {seed}; Steps: {steps}; Size_Adj: {size_adj}; Freq: {freq}")
+    distances = distance_matrix(data)
+    normalized_distances = normalize(distances)
+    normalized_cords = normalize_cords(data)
+    data_storage = DataStorage()
+    net = HopfieldNet(normalized_distances, seed, size_adj)
+    date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
+    new_path = f"..\\plots\\{date}-{str(tag)}-seed{seed}-steps{steps}\\"
+    if not os.path.exists(new_path):
+        os.makedirs(new_path)
+        print(f"Created log directory: {new_path}")
+    return data_storage, net, new_path, normalized_cords, normalized_distances
+
+
+def optimize_network(data_storage, freq, net, steps):
+    old = time.time()
+    for step in range(0, steps):
+        aligned_step = '{:>5}'.format(step)
+        sys.stdout.write(f"Step: {aligned_step} Time: {time.time() - old:.2}\r")
+        old = time.time()
+        net.update()
+
+        if step % freq == 0:
+            data_storage.save_data_point(net.get_net_state(), int(step/freq))
