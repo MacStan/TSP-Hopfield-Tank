@@ -1,16 +1,29 @@
 import traceback
+from multiprocessing import Pool
 from main import run, RunParams
 from input import read_data
 from args_parse import get_args
+from data_storage import *
 
-data = read_data("./input_data/burma14.txt")
+def run_wrapper(argList):
+    run(argList[0], argList[1])
 
-args = get_args()
+def main():
+    data = read_data("./input_data/burma14.txt")
+    args = get_args()
+    processInputArgs = []
+    dataStore = DataStorage()
+    runIndex = 0
 
-for seed in args.seeds:
-    for size_adj in args.size_adjs:
-        try:
-            run(RunParams(seed, args.steps, size_adj, data, args.freq, args.tag))
-        except:
-            print("FAILURE DURING RUN")
-            traceback.print_exc()
+    for seed in args.seeds:
+        for size_adj in args.size_adjs:
+            processInputArgs.append([
+                RunParams(seed, args.steps, size_adj, data, args.freq, args.tag),
+                dataStore.open_run_store(runIndex)])
+            runIndex += 1
+
+    pool = Pool()
+    pool.map(run_wrapper, processInputArgs)
+
+if __name__ == '__main__':
+    main()

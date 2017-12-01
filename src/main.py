@@ -8,6 +8,7 @@ from pathlib import Path
 from data_storage import DataStorage
 from hopfield import HopfieldNet
 from input import distance_matrix, normalize, normalize_cords
+from image_generator import ImageGenerator
 
 
 class RunParams:
@@ -20,15 +21,16 @@ class RunParams:
         self.tag = tag
 
 
-def run(params: RunParams):
-    data_storage, net, new_path, normalized_distances = initialize(params)
+def run(params: RunParams, runStore):
+    net, new_path, normalized_distances = initialize(params)
+    runStore.store_net_config(net.get_net_configuration())
 
     print("\nAnnealing network")
-    optimize_network(data_storage, params.freq, net, params.steps)
+    optimize_network(runStore, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
-    data_storage.generate_images(
-        new_path, params, normalize_cords(params.data), normalized_distances)
+    ImageGenerator(new_path).generate_run_images(
+        params, normalize_cords(params.data), normalized_distances, runStore)
 
     print("\nCreating video with ffmpeg")
     ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png " \
@@ -49,11 +51,10 @@ def initialize(params):
         f"Seed: {params.seed}; Steps: {params.steps}; Size_Adj: {params.size_adj}; Freq: {params.freq}")
     normalized_distances = normalize(distance_matrix(params.data))
     net = HopfieldNet(normalized_distances, params.seed, params.size_adj)
-    data_storage = DataStorage(net.get_net_configuration(), params)
-
     date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
     path = create_plots_path(date, params.tag, params.seed, params.steps)
-    return data_storage, net, path, normalized_distances
+
+    return net, path, normalized_distances
 
 
 def create_plots_path(date, tag, seed, steps):
@@ -64,7 +65,7 @@ def create_plots_path(date, tag, seed, steps):
     return path
 
 
-def optimize_network(data_storage, freq, net, steps):
+def optimize_network(runStore, freq, net, steps):
     old = time.time()
     for step in range(0, steps):
         aligned_step = '{:>5}'.format(step)
@@ -73,4 +74,5 @@ def optimize_network(data_storage, freq, net, steps):
         net.update()
 
         if step % freq == 0:
-            data_storage.save_data_point(net.get_net_state(), int(step / freq))
+            runStore.add_data_point(net.get_net_state())
+    runStore.commit_data()
