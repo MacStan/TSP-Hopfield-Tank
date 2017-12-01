@@ -1,1 +1,1 @@
-start cmd /k echo python runner.py --seed 1 --steps 500 --freq 15
+start cmd /k echo python runner.py --seeds 11 12 13 14 15 --size-adj 1.5 --steps 1200 --freq 5

@@ -34,7 +34,7 @@ class HopfieldNet:
         for x in range(0, self.size):
             row = []
             for y in range(0, self.size):
-                row.append(base + random.random() * base)
+                row.append(base + ((random.random()-0.5) / 10000))
             init.append(row)
         return init
 
@@ -42,7 +42,7 @@ class HopfieldNet:
         sigm = 0.5 * (1 + tanh(input / self.u0))
         activ = 0 if sigm < 0.2 else sigm
         activ = 1 if sigm > 0.8 else activ
-        return sigm;
+        return sigm
 
     def get_a(self, city, position):
         sum = 0.0
