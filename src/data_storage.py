@@ -9,8 +9,11 @@ class RunStoreHandle:
         self.runStorePath = runDesc["runStorePath"]
         self.configFilePath = os.path.join(self.runStorePath, "net-config")
         self.dataFilePath = os.path.join(self.runStorePath, "data-points")
+        self.imagesStorePath = os.path.join(self.runStorePath, "images")
         if not os.path.exists(self.runStorePath):
             os.makedirs(self.runStorePath)
+        if not os.path.exists(self.imagesStorePath):
+            os.makedirs(self.imagesStorePath)
         self.runData = self.load_run_data()
 
     def __len__(self):
@@ -41,6 +44,15 @@ class RunStoreHandle:
         if os.path.exists(self.configFilePath):
             with open(self.configFilePath, 'r') as configFile:
                 return json.loads(configFile.read())
+
+    def get_image_path_regexp(self):
+        return os.path.join(self.imagesStorePath, "img%d.png")
+
+    def get_image_path(self, dataPointIndex):
+        return os.path.join(self.imagesStorePath, f"img{dataPointIndex}.png")
+
+    def get_video_path(self):
+        return os.path.join(self.runStorePath, "run.mp4")
 
 class DataStorage:
     def __init__(self, dataStoragePath=f"../data"):

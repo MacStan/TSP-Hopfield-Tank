@@ -1,9 +1,7 @@
 import datetime as dt
 import os
-import subprocess as sp
 import sys
 import time
-from pathlib import Path
 
 from data_storage import DataStorage
 from hopfield import HopfieldNet
@@ -22,27 +20,18 @@ class RunParams:
 
 
 def run(params: RunParams, runStore):
-    net, new_path, normalized_distances = initialize(params)
+    net, normalized_distances = initialize(params)
     runStore.store_net_config(net.get_net_configuration())
+    imageGenerator = ImageGenerator(runStore)
 
     print("\nAnnealing network")
     optimize_network(runStore, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
-    ImageGenerator(new_path).generate_run_images(
-        params, normalize_cords(params.data), normalized_distances, runStore)
+    imageGenerator.generate_run_images(
+        params, normalize_cords(params.data), normalized_distances)
+    imageGenerator.generate_run_video(params)
 
-    print("\nCreating video with ffmpeg")
-    ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png " \
-                     f"-vframes {int(params.steps/params.freq)} {new_path}run.mp4"
-
-    sp.call(ffmpeg_command, stdout=open(os.devnull, 'wb'))
-
-    my_file = Path(f"{new_path}run.mp4")
-    if my_file.is_file():
-        print(f"Video file created at: '{my_file}'")
-    else:
-        print("No video created :(")
     print("Run Ended\n")
 
 
@@ -51,18 +40,8 @@ def initialize(params):
         f"Seed: {params.seed}; Steps: {params.steps}; Size_Adj: {params.size_adj}; Freq: {params.freq}")
     normalized_distances = normalize(distance_matrix(params.data))
     net = HopfieldNet(normalized_distances, params.seed, params.size_adj)
-    date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-    path = create_plots_path(date, params.tag, params.seed, params.steps)
 
-    return net, path, normalized_distances
-
-
-def create_plots_path(date, tag, seed, steps):
-    path = f"..\\plots\\{date}-{str(tag)}-seed{seed}-steps{steps}\\"
-    if not os.path.exists(path):
-        os.makedirs(path)
-        print(f"Created log directory: {path}")
-    return path
+    return net, normalized_distances
 
 
 def optimize_network(runStore, freq, net, steps):
