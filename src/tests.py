@@ -68,10 +68,10 @@ class TestHopfield(unittest.TestCase):
 
     def test_inputs_init(self):
         matrix = [[1,2,3],[1,2,3],[1,2,3]]
-        net = hopfield.HopfieldNet(matrix)
+        net = hopfield.HopfieldNet(matrix, 1, 0)
         for x in range(0, len(matrix)):
             for y in range(0, len(matrix)):
-                self.assertAlmostEqual(net.inputs[x][y], 1/9)
+                self.assertAlmostEqual(net.inputs[x][y], 1/9,3)
 
 
 
