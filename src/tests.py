@@ -1,8 +1,8 @@
 import math
 import unittest
-
+import subprocess as sp
 import hopfield
-
+import os
 from src import input
 
 
@@ -72,6 +72,16 @@ class TestHopfield(unittest.TestCase):
         for x in range(0, len(matrix)):
             for y in range(0, len(matrix)):
                 self.assertAlmostEqual(net.inputs[x][y], 1/9,3)
+    def test_functional(self):
+        sp.call(f"python runner.py --seeds 1 --size-adj 1.5 --steps 200 --freq 20 --tag UNITTEST")
+        os.chdir("../plots")
+        dirs = os.listdir(".")
+        valid_dirs = [x for x in dirs if "UNITTEST" in x]
+        for dir in valid_dirs:
+            contents = os.listdir(f"./{dir}")
+            self.assertTrue("img9.png" in contents)
+            self.assertTrue("run.mp4" in contents)
+
 
 
 

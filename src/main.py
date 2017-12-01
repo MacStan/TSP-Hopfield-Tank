@@ -21,16 +21,17 @@ class RunParams:
         self.tag = tag
 
 
-def run(params: RunParams, runStore):
+def run(params: RunParams, run_store):
+    create_logs_path()
     net, new_path, normalized_distances = initialize(params)
-    runStore.store_net_config(net.get_net_configuration())
+    run_store.store_net_config(net.get_net_configuration())
 
     print("\nAnnealing network")
-    optimize_network(runStore, params.freq, net, params.steps)
+    optimize_network(run_store, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
     ImageGenerator(new_path).generate_run_images(
-        params, normalize_cords(params.data), normalized_distances, runStore)
+        params, normalize_cords(params.data), normalized_distances, run_store)
 
     print("\nCreating video with ffmpeg")
     ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png " \
@@ -76,3 +77,11 @@ def optimize_network(runStore, freq, net, steps):
         if step % freq == 0:
             runStore.add_data_point(net.get_net_state())
     runStore.commit_data()
+
+
+def create_logs_path():
+    path = f"..\\logs"
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(f"Created log directory: {path}")
+    return path
