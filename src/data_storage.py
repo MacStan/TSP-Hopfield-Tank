@@ -13,8 +13,8 @@ class RunStoreHandle:
             os.makedirs(self.runStorePath)
         self.runData = self.load_run_data()
 
-    def close(self):
-        self.commit_data()
+    def __len__(self):
+        return len(self.runData)
 
     def add_data_point(self, dataPoint):
         self.runData.append(dataPoint)
@@ -23,7 +23,7 @@ class RunStoreHandle:
         with open(self.dataFilePath, 'w') as dataFile:
             dataFile.write(json.dumps(self.runData))
 
-    def read_data_point(self, dataPointIndex):
+    def get_data_point(self, dataPointIndex):
         return self.runData[dataPointIndex]
 
     def load_run_data(self):
@@ -33,14 +33,11 @@ class RunStoreHandle:
         else:
             return []
 
-    def get_run_length(self):
-        return len(self.runData)
-
-    def write_net_config(self, netConfig):
+    def store_net_config(self, netConfig):
         with open(self.configFilePath, 'w') as configFile:
             configFile.write(json.dumps(netConfig))
 
-    def read_net_config(self):
+    def get_net_config(self):
         if os.path.exists(self.configFilePath):
             with open(self.configFilePath, 'r') as configFile:
                 return json.loads(configFile.read())

@@ -2,16 +2,15 @@ import sys
 from plotter import Plotter
 
 class ImageGenerator():
-    def __init__(self):
-        pass
+    def __init__(self, new_path):
+        self.new_path = new_path
 
-    def generate_run_images(self, new_path, params, cords, distances, runStore):
+    def generate_run_images(self, params, cords, distances, runStore):
         print("Generating images!")
 
-        for dataPointIndex in range(0, runStore.get_run_length()):
-            self.plot_data_point(new_path,
-                                 runStore.read_net_config(),
-                                 runStore.read_data_point(dataPointIndex),
+        for dataPointIndex in range(0, len(runStore)):
+            self.plot_data_point(runStore.get_net_config(),
+                                 runStore.get_data_point(dataPointIndex),
                                  dataPointIndex,
                                  params.freq,
                                  cords,
@@ -19,7 +18,7 @@ class ImageGenerator():
             sys.stdout.write(f"Image {dataPointIndex} out of {int(params.steps / params.freq)}\r")
         print("\nIt is done")
 
-    def plot_data_point(self, new_path, net_conf, net_state, img_index, freq, cords, distances):
+    def plot_data_point(self, net_conf, net_state, img_index, freq, cords, distances):
         plotter = Plotter(6)
         plotter.add_subplot(net_state["activations"], 'hot', 0, 1, f"Activations")
         plotter.add_subplot(net_state["inputs"], 'coolwarm', -0.075, 0.075,
@@ -33,7 +32,7 @@ class ImageGenerator():
             f"d {net_conf['d']}; size_adj"
             f" {net_conf['size_adj']}; u0 {net_conf['u0']}; "
             f"timestep {net_conf['timestep']}; Step: {img_index * freq}",
-            f"{new_path}\img{img_index}.png")
+            f"{self.new_path}\img{img_index}.png")
 
     def get_map(self, acts, cords):
         points = []

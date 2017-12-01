@@ -23,14 +23,14 @@ class RunParams:
 
 def run(params: RunParams, runStore):
     net, new_path, normalized_distances = initialize(params)
-    runStore.write_net_config(net.get_net_configuration())
+    runStore.store_net_config(net.get_net_configuration())
 
     print("\nAnnealing network")
     optimize_network(runStore, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
-    ImageGenerator().generate_run_images(
-        new_path, params, normalize_cords(params.data), normalized_distances, runStore)
+    ImageGenerator(new_path).generate_run_images(
+        params, normalize_cords(params.data), normalized_distances, runStore)
 
     print("\nCreating video with ffmpeg")
     ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png " \
