@@ -22,24 +22,20 @@ class RunParams:
 
 def run(params: RunParams):
     data_storage, net, new_path, normalized_distances = initialize(params)
-
     data_storage.start_new_seed(params.seed, net.get_net_configuration())
 
     print("\nAnnealing network")
     optimize_network(data_storage, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
-    data_storage.generate_images(new_path, params.seed, int(params.steps / params.freq),
-                                 params.freq,
-                                 normalize_cords(params.data),
-                                 normalized_distances)
+    data_storage.generate_images(
+        new_path, params, normalize_cords(params.data), normalized_distances)
 
     print("\nCreating video with ffmpeg")
-    ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png -vframes {int(params.steps/params.freq)} " \
-                     f"{new_path}run.mp4"
+    ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png " \
+                     f"-vframes {int(params.steps/params.freq)} {new_path}run.mp4"
 
     sp.call(ffmpeg_command, stdout=open(os.devnull, 'wb'))
-    open(f"{new_path}\Success", "w", )
 
     my_file = Path(f"{new_path}run.mp4")
     if my_file.is_file():

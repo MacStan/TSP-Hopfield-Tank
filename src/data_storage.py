@@ -6,47 +6,47 @@ from plotter import Plotter
 
 
 class DataStorage:
-    def __init__(self, dataStoragePath=f"../data"):
-        runTimestamp = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-        self.runStoragePath = os.path.join(dataStoragePath, f"{runTimestamp}")
+    def __init__(self, storage_root_path=f"../data"):
+        timestamp = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
+        self.runStoragePath = os.path.join(storage_root_path, f"{timestamp}")
         if not os.path.exists(self.runStoragePath):
             os.makedirs(self.runStoragePath)
 
-    def start_new_seed(self, seedIndex, netConfiguration):
-        self.currentSeedStoragePath = os.path.join(self.runStoragePath, f"seed{seedIndex}")
-        if not os.path.exists(self.currentSeedStoragePath):
-            os.makedirs(self.currentSeedStoragePath)
-        with open(os.path.join(self.currentSeedStoragePath, f"net-configuration"),
+    def start_new_seed(self, seed, net_conf):
+        self.storage_path = os.path.join(self.runStoragePath, f"seed{seed}")
+        if not os.path.exists(self.storage_path):
+            os.makedirs(self.storage_path)
+        with open(os.path.join(self.storage_path, f"net-configuration"),
                   'x') as configFile:
-            configFile.write(json.dumps(netConfiguration))
+            configFile.write(json.dumps(net_conf))
 
-    def save_data_point(self, netState, dataPointIndex):
-        with open(os.path.join(self.currentSeedStoragePath, f"data-point{dataPointIndex}"),
-                  'x') as dataFile:
-            dataFile.write(json.dumps(netState))
+    def save_data_point(self, net_state, point_index):
+        with open(os.path.join(self.storage_path, f"data-point{point_index}"), 'x') \
+                as dataFile:
+            dataFile.write(json.dumps(net_state))
 
-    def get_net_configuration(self, seedIndex):
+    def get_net_configuration(self, seed):
         with open(os.path.join(self.runStoragePath,
-                               f"seed{seedIndex}/net-configuration")) as configFile:
+                               f"seed{seed}/net-configuration")) as configFile:
             return json.loads(configFile.read())
 
-    def get_data_point(self, seedIndex, dataPointIndex):
-        with open(os.path.join(self.runStoragePath, f"seed{seedIndex}/data-point{dataPointIndex}"),
+    def get_data_point(self, seed, point_index):
+        with open(os.path.join(self.runStoragePath, f"seed{seed}/data-point{point_index}"),
                   'r') as dataFile:
             return json.loads(dataFile.read())
 
-    def generate_images(self, new_path, seed, dataPointRange, freq, cords, distances):
+    def generate_images(self, new_path, params, cords, distances):
         print("Generating images!")
 
-        for dataPointIndex in range(0, dataPointRange):
+        for dataPointIndex in range(0, int(params.steps / params.freq)):
             self.plot_data_point(new_path,
-                                 self.get_net_configuration(seed),
-                                 self.get_data_point(seed, dataPointIndex),
+                                 self.get_net_configuration(params.seed),
+                                 self.get_data_point(params.seed, dataPointIndex),
                                  dataPointIndex,
-                                 freq,
+                                 params.freq,
                                  cords,
                                  distances)
-            sys.stdout.write(f"Image {dataPointIndex} out of {dataPointRange}\r")
+            sys.stdout.write(f"Image {dataPointIndex} out of {int(params.steps / params.freq)}\r")
         print("\nIt is done")
 
     def get_map(self, acts, cords):
