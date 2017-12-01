@@ -1,3 +1,4 @@
+import traceback
 from main import run
 from input import read_data
 from args_parse import get_args
@@ -12,3 +13,4 @@ for seed in args.seeds:
             run(seed, args.steps, size_adj, data, args.freq, args.tag)
         except:
             print("FAILURE DURING RUN")
+            traceback.print_exc()
