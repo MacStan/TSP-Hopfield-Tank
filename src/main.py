@@ -10,6 +10,16 @@ import time
 import sys
 
 
+class RunParams:
+    def __init__(self, seed, steps, size_adj, data, freq, tag):
+        self.seed = seed
+        self.steps = steps
+        self.size_adj = size_adj
+        self.data = data
+        self.freq = freq
+        self.tag = tag
+
+
 def generate_images(new_path, seed, dataPointRange, freq, cords, dataStorage, distances):
     print("Generating images!")
 
@@ -31,7 +41,7 @@ def get_map(acts, cords):
         for city in range(0, len(acts)):
             if acts[city][pos] > 0.6:
                 points.append(cords[city])
-                
+
     return points
 
 
@@ -51,24 +61,23 @@ def plot_data_point(new_path, net_conf, net_state, imgIndex, freq, cords, distan
         f"{new_path}\img{imgIndex}.png")
 
 
-def run(seed, steps, size_adj, data, freq, tag):
+def run(params : RunParams):
+    data_storage, net, new_path, normalized_distances = initialize(params)
 
-    data_storage, net, new_path, normalized_cords, normalized_distances \
-        = initialize(data, seed, size_adj, steps, tag, freq)
-
-    data_storage.start_new_seed(seed, net.get_net_configuration())
+    data_storage.start_new_seed(params.seed, net.get_net_configuration())
 
     print("\nAnnealing network")
-    optimize_network(data_storage, freq, net, steps)
-    print("\nAnnealing done!")
-    print()
-    generate_images(new_path, seed, int(steps / freq), freq, normalized_cords, data_storage, normalized_distances )
-    print()
-    print("Creating video with ffmpeg")
-    ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png -vframes {int(steps/freq)} " \
+    optimize_network(data_storage, params.freq, net, params.steps)
+    print("\nAnnealing done!\n")
+
+    generate_images(new_path, params.seed, int(params.steps / params.freq), params.freq, normalize_cords(params.data), data_storage,
+                    normalized_distances)
+
+    print("\nCreating video with ffmpeg")
+    ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png -vframes {int(params.steps/params.freq)} " \
                      f"{new_path}run.mp4"
 
-    sp.call(ffmpeg_command,stdout=open(os.devnull, 'wb'))
+    sp.call(ffmpeg_command, stdout=open(os.devnull, 'wb'))
     open(f"{new_path}\Success", "w", )
 
     my_file = Path(f"{new_path}run.mp4")
@@ -80,19 +89,23 @@ def run(seed, steps, size_adj, data, freq, tag):
     print()
 
 
-def initialize(data, seed, size_adj, steps, tag, freq):
-    print(f"Seed: {seed}; Steps: {steps}; Size_Adj: {size_adj}; Freq: {freq}")
-    distances = distance_matrix(data)
-    normalized_distances = normalize(distances)
-    normalized_cords = normalize_cords(data)
+def initialize(params):
+    print(f"Seed: {params.seed}; Steps: {params.steps}; Size_Adj: {params.size_adj}; Freq: {params.freq}")
+    normalized_distances = normalize(distance_matrix(params.data))
     data_storage = DataStorage()
-    net = HopfieldNet(normalized_distances, seed, size_adj)
+
+    net = HopfieldNet(normalized_distances, params.seed, params.size_adj)
     date = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-    new_path = f"..\\plots\\{date}-{str(tag)}-seed{seed}-steps{steps}\\"
-    if not os.path.exists(new_path):
-        os.makedirs(new_path)
-        print(f"Created log directory: {new_path}")
-    return data_storage, net, new_path, normalized_cords, normalized_distances
+    path = create_plots_path(date, params.tag, params.seed, params.steps)
+    return data_storage, net, path, normalized_distances
+
+
+def create_plots_path(date, tag, seed, steps):
+    path = f"..\\plots\\{date}-{str(tag)}-seed{seed}-steps{steps}\\"
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(f"Created log directory: {path}")
+    return path
 
 
 def optimize_network(data_storage, freq, net, steps):
@@ -104,4 +117,4 @@ def optimize_network(data_storage, freq, net, steps):
         net.update()
 
         if step % freq == 0:
-            data_storage.save_data_point(net.get_net_state(), int(step/freq))
+            data_storage.save_data_point(net.get_net_state(), int(step / freq))
