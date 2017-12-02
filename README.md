@@ -6,6 +6,26 @@
 * 'Heatmap over time' video generation (very usefull for debuging)
 ![Alt Text](https://github.com/MacStan/TSP-Hopfield-Tank/blob/master/res/output.gif)
 
+## Deployment
+### Running
+Programs supports commandline interface which allows to run network once, or multiple times in a row.
+Properties of the network can be configured with arguments
+
+```
+  -h, --help            show this help message and exit
+  --steps [STEPS]       Number of steps to take.
+  --freq [FREQ]         Frequency of taking snapshots.
+  --seeds [SEEDS [SEEDS ...]]
+                        Seed for random. Defines whole run.
+  --size-adjs [SIZE_ADJS [SIZE_ADJS ...]]
+                        specifies value of size adjustment
+  --tag [TAG]           tag added to name
+```
+### Dependancies
+* Matplotlib 
+* ffmpeg 
+
+
 ## Theoretical remarks
 Implementation of Hopfield-Tank model for TSP. Project for my University Course.
 
