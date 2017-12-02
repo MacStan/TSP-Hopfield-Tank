@@ -11,16 +11,9 @@ def run_wrapper(argList):
 
 def main(flag, args ):
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    print(dir_path)
-
-    dir_path = re.sub("/src$","", dir_path)
-    dir_path = re.sub(r"\\src$", "", dir_path)
-    os.chdir(dir_path)
-
     if not flag:
         args = get_args()
-    data = read_data("./src/input_data/burma14.txt")
+    data = read_data("./input_data/burma14.txt")
     processInputArgs = []
     dataStore = DataStorage()
     runIndex = 0

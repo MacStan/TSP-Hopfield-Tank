@@ -4,4 +4,9 @@ machine:
 dependencies:
   pre:
     #- echo -ne '\n' | sudo add-apt-repository ppa:mc3man/trusty-media; sudo apt-get update; sudo apt-get install ffmpeg; export PATH=$PATH:/usr/bin/ffmpeg;
-  # - sudo add-apt-repository ppa:mc3man/trusty-media;
+  # - sudo add-apt-repository ppa:mc3man/trusty-media; - run:
+jobs:
+  build:  
+    command: |
+      cd /home/ubuntu/TSP-Hopfield-Tank/src
+      python tests.py
