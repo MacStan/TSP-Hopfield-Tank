@@ -3,5 +3,5 @@ machine:
     version: 3.6.1
 dependencies:
   pre:
-    - echo -ne '\n' | sudo add-apt-repository ppa:mc3man/trusty-media; sudo apt-get update; sudo apt-get install ffmpeg; ls /; ls /usr/; ls /usr/bin/; ls /usr/bin/ffmpeg;
+    - echo -ne '\n' | sudo add-apt-repository ppa:mc3man/trusty-media; sudo apt-get update; sudo apt-get install ffmpeg; export PATH=$PATH:/usr/bin/ffmpeg; /usr/bin/ffmpeg;
   # - sudo add-apt-repository ppa:mc3man/trusty-media;
