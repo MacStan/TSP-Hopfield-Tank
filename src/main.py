@@ -4,7 +4,7 @@ import sys
 import time
 
 from data_storage import DataStorage
-from hopfield import HopfieldNet
+from hopfield_np import HopfieldNet
 from input import distance_matrix, normalize, normalize_cords
 from image_generator import ImageGenerator
 
