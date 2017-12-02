@@ -5,14 +5,3 @@ dependencies:
   pre:
     #- echo -ne '\n' | sudo add-apt-repository ppa:mc3man/trusty-media; sudo apt-get update; sudo apt-get install ffmpeg; export PATH=$PATH:/usr/bin/ffmpeg;
   # - sudo add-apt-repository ppa:mc3man/trusty-media; - run:
-jobs:
-  build:  
-    - run:
-        name: Start Selenium
-          command: |
-            cd /home/ubuntu/TSP-Hopfield-Tank/src  
-          background: true
-    command: |
-
-      
-      python tests.py
