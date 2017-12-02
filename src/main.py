@@ -1,36 +1,36 @@
-import datetime as dt
-import os
 import sys
 import time
 
-from data_storage import DataStorage
-from hopfield_np import HopfieldNet
-from input import distance_matrix, normalize, normalize_cords
-from image_generator import ImageGenerator
+from hopfield.hopfield_np import HopfieldNet
+from hopfield.input import distance_matrix, normalize, normalize_cords
+from storage.image_generator import GraphicalGenerator
 
 
-class RunParams:
-    def __init__(self, seed, steps, size_adj, data, freq, tag):
+class run_params:
+    def __init__(self, seed, steps, size_adj, data, freq, tag, do_images, do_video):
         self.seed = seed
         self.steps = steps
         self.size_adj = size_adj
         self.data = data
         self.freq = freq
         self.tag = tag
+        self.do_images = do_images
+        self.do_video = do_video
 
 
-def run(params: RunParams, runStore):
+def run(params: run_params, run_store):
     net, normalized_distances = initialize(params)
-    runStore.store_net_config(net.get_net_configuration())
-    imageGenerator = ImageGenerator(runStore)
+    run_store.store_net_config(net.get_net_configuration())
+    graphical_generator = GraphicalGenerator(run_store)
 
     print("\nAnnealing network")
-    optimize_network(runStore, params.freq, net, params.steps)
+    optimize_network(run_store, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
-    imageGenerator.generate_run_images(
-        params, normalize_cords(params.data), normalized_distances)
-    imageGenerator.generate_run_video(params)
+    if params.do_images or params.do_video:
+        graphical_generator.generate_run_images(params, normalize_cords(params.data), normalized_distances)
+    if params.do_video:
+        graphical_generator.generate_run_video(params)
 
     print("Run Ended\n")
 

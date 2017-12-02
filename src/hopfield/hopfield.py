@@ -2,7 +2,7 @@ from math import tanh
 import random
 import logging as lg
 import datetime as dt
-
+import os
 
 class HopfieldNet:
     def __init__(self, matrix, seed, size_adj):
@@ -22,9 +22,11 @@ class HopfieldNet:
 
         self.seed = seed
         self.inputs = self.init_inputs()
+        if not os.path.exists("./logs"):
+            os.makedirs("./logs")
         self.logger = lg.getLogger('HopfieldNet')
         lg.basicConfig(
-            filename=f'./logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
+            filename=f'../../logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
             level=lg.INFO)
 
     def init_inputs(self):

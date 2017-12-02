@@ -1,12 +1,10 @@
 import json
 import os
-import datetime as dt
-import sys
-from plotter import Plotter
+
 
 class RunStoreHandle:
-    def __init__(self, parentStorage, runDesc):
-        self.runStorePath = runDesc["runStorePath"]
+    def __init__(self, run_desc):
+        self.runStorePath = run_desc["runStorePath"]
         self.configFilePath = os.path.join(self.runStorePath, "net-config")
         self.dataFilePath = os.path.join(self.runStorePath, "data-points")
         self.imagesStorePath = os.path.join(self.runStorePath, "images")
@@ -19,8 +17,8 @@ class RunStoreHandle:
     def __len__(self):
         return len(self.runData)
 
-    def add_data_point(self, dataPoint):
-        self.runData.append(dataPoint)
+    def add_data_point(self, data_point):
+        self.runData.append(data_point)
 
     def commit_data(self):
         with open(self.dataFilePath, 'w') as dataFile:
@@ -52,26 +50,4 @@ class RunStoreHandle:
         return os.path.join(self.imagesStorePath, f"img{dataPointIndex}.png")
 
     def get_video_path(self):
-        return os.path.join(self.runStorePath, "run.mp4")
-
-class DataStorage:
-    def __init__(self, dataStoragePath=f"../data"):
-        seriesTimestamp = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
-        self.seriesStoragePath = os.path.join(dataStoragePath, f"{seriesTimestamp}")
-        self.recordedRuns = {}
-        if not os.path.exists(self.seriesStoragePath):
-            os.makedirs(self.seriesStoragePath)
-
-    def open_run_store(self, runIndex):
-        if runIndex not in self.recordedRuns:
-            runDesc = {
-                "index": runIndex,
-                "runStorePath": self.get_run_store_path(runIndex)
-            }
-            self.recordedRuns.update({runIndex: runDesc})
-            return RunStoreHandle(self, runDesc)
-        else:
-            return RunStoreHandle(self, self.recordedRuns[runIndex])
-
-    def get_run_store_path(self, runIndex):
-        return os.path.join(self.seriesStoragePath, f"run{runIndex}")
+        return os.path.join(self.runStorePath, "running.mp4")

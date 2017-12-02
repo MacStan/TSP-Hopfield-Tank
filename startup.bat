@@ -1,0 +1,1 @@
+start cmd /k echo python ./src/runner.py --seeds 1 --size-adjs 1.5 --steps 300 --freq 20 --images --video

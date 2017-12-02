@@ -1,4 +1,3 @@
-from math import tanh
 import random
 import logging as lg
 import datetime as dt
@@ -7,6 +6,8 @@ import numpy as np
 
 class HopfieldNet:
     def __init__(self, distances, seed, size_adj):
+        self.seed = seed
+        random.seed(self.seed)
 
         # values taken from paper
         self.size = len(distances)
@@ -23,7 +24,6 @@ class HopfieldNet:
 
         self.size_adj = size_adj
 
-        self.seed = seed
         self.inputs = self.init_inputs()
         self.logger = lg.getLogger('HopfieldNet')
         lg.basicConfig(
@@ -31,7 +31,6 @@ class HopfieldNet:
             level=lg.INFO)
 
     def init_inputs(self):
-        random.seed(self.seed)
         base = np.ones([self.size, self.size], float)
         base /= self.size ** 2
         for x in range(0, self.size):
@@ -59,13 +58,15 @@ class HopfieldNet:
         return sum * self.c
 
     def get_d(self, main_city, position):
+        return self.get_neighbours_weights(main_city, position) * self.d
+
+    def get_neighbours_weights(self, main_city, position):
         sum = 0.0
         for city in range(0, self.size):
             preceding = self.activation(self.inputs[city, (position + 1) % self.size])
             following = self.activation(self.inputs[city, (position - 1)])
             sum += self.distances[main_city][city] * (preceding + following)
-
-        return sum * self.d
+        return sum
 
     def get_states_change(self, city, pos):
         new_state = -self.inputs[city][pos]
@@ -77,7 +78,6 @@ class HopfieldNet:
 
     def update(self):
         self.inputs_change = np.zeros([self.size, self.size], float)
-
         for city in range(0, self.size):
             for pos in range(0, self.size):
                 self.inputs_change[city, pos] = self.timestep * self.get_states_change(city, pos)
@@ -86,22 +86,13 @@ class HopfieldNet:
         pass
 
     def activations(self):
-        activations = []
-        for x in range(0, self.size):
-            row = []
-            for y in range(0, self.size):
-                act = self.activation(self.inputs[x][y])
-                row.append(act)
-            activations.append(row)
-        return activations
-
-
-
+        return self.activation(self.inputs)
 
     def get_net_configuration(self):
         return {"a": self.a, "b": self.b, "c": self.c, "d": self.d, "u0": self.u0,
                 "size_adj": self.size_adj, "timestep": self.timestep}
 
     def get_net_state(self):
-        return {"activations": self.activations(), "inputs": self.inputs.tolist(),
+        return {"activations": self.activations().tolist(),
+                "inputs": self.inputs.tolist(),
                 "inputsChange": self.inputs_change.tolist()}
