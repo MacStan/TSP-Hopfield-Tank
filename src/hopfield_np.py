@@ -4,13 +4,14 @@ import logging as lg
 import datetime as dt
 import numpy as np
 
+
 class HopfieldNet:
     def __init__(self, distances, seed, size_adj):
 
         # values taken from paper
         self.size = len(distances)
 
-        self.inputsChange = np.zeros([self.size, self.size],float)
+        self.inputsChange = np.zeros([self.size, self.size], float)
         self.a = 500
         self.b = 500
         self.c = 200
@@ -35,38 +36,33 @@ class HopfieldNet:
         base /= self.size ** 2
         for x in range(0, self.size):
             for y in range(0, self.size):
-                base[x][y] += ((random.random()-0.5) / 10000)
+                base[x][y] += ((random.random() - 0.5) / 10000)
         return base
 
-    def activation(self, input):
-        sigm = 0.5 * (1 + np.tanh(input / self.u0))
+    def activation(self, single_input):
+        sigm = 0.5 * (1 + np.tanh(single_input / self.u0))
         return sigm
 
     def get_a(self, city, position):
-        sum = 0.0
-        sum += self.activation(self.inputs[city][:])
-        sum -= self.activation(self.inputs[city][position])
+        sum = np.sum(self.activation(self.inputs[city, :]))
+        sum -= self.activation(self.inputs[city, position])
         return sum * self.a
 
-    def get_b(self, mainCity, position):
-        sum = 0.0
-        sum += sum( self.activation(self.inputs[:][position]) )
-        sum -= self.activation(self.inputs[mainCity][position])
+    def get_b(self, main_city, position):
+        sum = np.sum(self.activation(self.inputs[:, position]))
+        sum -= self.activation(self.inputs[main_city][position])
         return sum * self.b
 
     def get_c(self):
-        sum = 0.0
-        for city in range(0, self.size):
-            for pos in range(0, self.size):
-                sum += self.activation(self.inputs[city][pos])
+        sum = np.sum(self.activation(self.inputs[:, :]))
         sum -= self.size + self.size_adj
         return sum * self.c
 
     def get_d(self, main_city, position):
         sum = 0.0
         for city in range(0, self.size):
-            preceding = self.activation(self.inputs[city][(position + 1) % self.size])
-            following = self.activation(self.inputs[city][(position - 1)])
+            preceding = self.activation(self.inputs[city,(position + 1) % self.size])
+            following = self.activation(self.inputs[city,(position - 1)])
             sum += self.distances[main_city][city] * (preceding + following)
 
         return sum * self.d
