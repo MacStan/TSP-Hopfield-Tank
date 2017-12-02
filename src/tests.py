@@ -73,7 +73,7 @@ class TestHopfield(unittest.TestCase):
             for y in range(0, len(matrix)):
                 self.assertAlmostEqual(net.inputs[x][y], 1/9,3)
     def test_functional(self):
-        sp.call(f"python runner.py --seeds 1 --size-adj 1.5 --steps 200 --freq 20 --tag UNITTEST")
+        sp.call(f"python3 runner.py --seeds 1 --size-adj 1.5 --steps 200 --freq 20 --tag UNITTEST")
         os.chdir("../plots")
         dirs = os.listdir(".")
         valid_dirs = [x for x in dirs if "UNITTEST" in x]
