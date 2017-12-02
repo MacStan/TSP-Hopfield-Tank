@@ -4,21 +4,21 @@ import subprocess as sp
 import sys
 import time
 from pathlib import Path
-
-from data_storage import DataStorage
 from hopfield import HopfieldNet
 from input import distance_matrix, normalize, normalize_cords
 from image_generator import ImageGenerator
 
 
 class RunParams:
-    def __init__(self, seed, steps, size_adj, data, freq, tag):
+    def __init__(self, seed, steps, size_adj, data, freq, tag, plot,video ):
         self.seed = seed
         self.steps = steps
         self.size_adj = size_adj
         self.data = data
         self.freq = freq
         self.tag = tag
+        self.do_plot = plot
+        self.do_video = video
 
 
 def run(params: RunParams, run_store):
@@ -30,14 +30,16 @@ def run(params: RunParams, run_store):
     optimize_network(run_store, params.freq, net, params.steps)
     print("\nAnnealing done!\n")
 
-    ImageGenerator(new_path).generate_run_images(
-        params, normalize_cords(params.data), normalized_distances, run_store)
+    if (params.do_plot):
+        ImageGenerator(new_path).generate_run_images(
+            params, normalize_cords(params.data), normalized_distances, run_store)
 
     print("\nCreating video with ffmpeg")
     ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {new_path}img%d.png " \
                      f"-vframes {int(params.steps/params.freq)} {new_path}run.mp4"
 
-    sp.call(ffmpeg_command, stdout=open(os.devnull, 'wb'))
+    if (params.do_video):
+        sp.call(ffmpeg_command, stdout=open(os.devnull, 'wb'))
 
     my_file = Path(f"{new_path}run.mp4")
     if my_file.is_file():

@@ -75,14 +75,12 @@ class TestHopfield(unittest.TestCase):
                 self.assertAlmostEqual(net.inputs[x][y], 1 / 9, 3)
 
     def test_functional(self):
-        os.chdir(".//src//")
-        main(True, Namespace(seeds=[1], size_adjs=[0], steps=50, freq=10, tag='UNITTEST'))
+        main(True, Namespace(seeds=[1], size_adjs=[0], steps=50, freq=10, tag='UNITTEST', video = False, plot = True))
         dirs = os.listdir("..//plots")
         valid_dirs = [x for x in dirs if "UNITTEST" in x]
         for dir in valid_dirs:
             contents = os.listdir(f"..//plots//{dir}")
             self.assertTrue("img4.png" in contents)
-            self.assertTrue("run.mp4" in contents)
         for dir in valid_dirs:
             shutil.rmtree(f"..//plots//{dir}")
 

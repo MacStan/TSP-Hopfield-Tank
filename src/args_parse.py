@@ -13,5 +13,7 @@ def get_args():
                         help='specifies value of size adjustment')
     parser.add_argument('--tag', nargs='?', default="", type=str,
                         help='tag added to name')
+    parser.add_argument('-v', '--video', action="store_true",help='create video')
+    parser.add_argument('-p', '--plot', action="store_true", help='create plots')
     args = parser.parse_args()
     return args

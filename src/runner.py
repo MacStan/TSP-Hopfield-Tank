@@ -19,7 +19,8 @@ def main(flag, args ):
     for seed in args.seeds:
         for size_adj in args.size_adjs:
             processInputArgs.append([
-                RunParams(seed, args.steps, size_adj, data, args.freq, args.tag),
+                RunParams(
+                    seed, args.steps, size_adj, data, args.freq, args.tag, args.plot, args.video),
                 dataStore.open_run_store(runIndex)])
             runIndex += 1
 
