@@ -1,8 +1,10 @@
 from math import sqrt
 from typing import List, Tuple
-
+import os
 
 def read_data(file):
+    print(file)
+    print(os.listdir("."))
     stream = open(file)
     lines = stream.readlines()
 
