@@ -3,5 +3,5 @@ machine:
     version: 3.6.1
 dependencies:
   pre:
-    - sudo apt-get update; sudo apt-get install ffmpeg
+    - echo -ne '\n' | sudo add-apt-repository ppa:mc3man/trusty-media; sudo apt-get update; sudo apt-get install ffmpeg
   # - sudo add-apt-repository ppa:mc3man/trusty-media;
