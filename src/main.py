@@ -61,6 +61,7 @@ def initialize(params):
 
 
 def create_plots_path(date, tag, seed, steps):
+
     path = f"..\\plots\\{date}-{str(tag)}-seed{seed}-steps{steps}\\"
     if not os.path.exists(path):
         os.makedirs(path)
