@@ -13,7 +13,7 @@ def main(flag, args ):
 
     if not flag:
         args = get_args()
-    data = read_data("./input_data/burma14.txt")
+    data = read_data("./src/input_data/burma14.txt")
     processInputArgs = []
     dataStore = DataStorage()
     runIndex = 0

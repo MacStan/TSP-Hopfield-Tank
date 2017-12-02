@@ -7,6 +7,12 @@ dependencies:
   # - sudo add-apt-repository ppa:mc3man/trusty-media; - run:
 jobs:
   build:  
+    - run:
+        name: Start Selenium
+          command: |
+            cd /home/ubuntu/TSP-Hopfield-Tank/src  
+          background: true
     command: |
-      cd /home/ubuntu/TSP-Hopfield-Tank/src
+
+      
       python tests.py
