@@ -2,7 +2,7 @@ import math
 import unittest
 import subprocess as sp
 import hopfield
-import os
+import os, sys
 from src import input
 
 
@@ -73,7 +73,7 @@ class TestHopfield(unittest.TestCase):
                 self.assertAlmostEqual(net.inputs[x][y], 1 / 9, 3)
 
     def test_functional(self):
-        print(os.curdir)
+        print(sys.path)
         sp.call(
             f"python /home/ubuntu/TSP-Hopfield-Tank/src/runner.py"
             f" --seeds 1 --size-adj 1.5 --steps 200 --freq 20 --tag UNITTEST")
