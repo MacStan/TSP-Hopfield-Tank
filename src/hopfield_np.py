@@ -11,7 +11,7 @@ class HopfieldNet:
         # values taken from paper
         self.size = len(distances)
 
-        self.inputsChange = np.zeros([self.size, self.size], float)
+        self.inputs_change = np.zeros([self.size, self.size], float)
         self.a = 500
         self.b = 500
         self.c = 200
@@ -61,8 +61,8 @@ class HopfieldNet:
     def get_d(self, main_city, position):
         sum = 0.0
         for city in range(0, self.size):
-            preceding = self.activation(self.inputs[city,(position + 1) % self.size])
-            following = self.activation(self.inputs[city,(position - 1)])
+            preceding = self.activation(self.inputs[city, (position + 1) % self.size])
+            following = self.activation(self.inputs[city, (position - 1)])
             sum += self.distances[main_city][city] * (preceding + following)
 
         return sum * self.d
@@ -76,17 +76,13 @@ class HopfieldNet:
         return new_state
 
     def update(self):
-        self.inputsChange = []
-
-        for city in range(0, self.size):
-            row = []
-            for pos in range(0, self.size):
-                row.append(self.timestep * self.get_states_change(city, pos))
-            self.inputsChange.append(row)
+        self.inputs_change = np.zeros([self.size, self.size], float)
 
         for city in range(0, self.size):
             for pos in range(0, self.size):
-                self.inputs[city][pos] += self.inputsChange[city][pos]
+                self.inputs_change[city, pos] = self.timestep * self.get_states_change(city, pos)
+
+        self.inputs += self.inputs_change
         pass
 
     def activations(self):
@@ -99,60 +95,13 @@ class HopfieldNet:
             activations.append(row)
         return activations
 
-    def activations_printable(self):
-        activations = []
-        for x in range(0, self.size):
-            row = []
-            for y in range(0, self.size):
-                act = self.activation(self.inputs[x][y])
-                sign = "X" if act > 0.75 else "_"
-                row.append(sign)
-            activations.append(f"{x}# " + " ".join(row))
 
-        return "\n".join(activations)
 
-    def inputs_printable(self):
-        activations = []
-        for x in range(0, self.size):
-            row = []
-            for y in range(0, self.size):
-                row.append(str(f"{self.inputs[x][y]:.2f}"))
-            activations.append(" ".join(row))
-
-        return "\n".join(activations)
-
-    def encoded_path_valid(self):
-        valid = True
-        for x in range(0, self.size):
-            counter = 0.0
-            for y in range(0, self.size):
-                counter += self.activation(self.inputs[x][y])
-            valid &= self.activations_vector_validity("x", x, counter)
-        for y in range(0, self.size):
-            counter = 0.0
-            for x in range(0, self.size):
-                counter += self.activation(self.inputs[x][y])
-            valid &= self.activations_vector_validity("y", y, counter)
-
-        if valid:
-            self.logger.info("SUCCESS")
-        else:
-            self.logger.info("FAIL")
-
-    def activations_vector_validity(self, cord, cord_pos, counter):
-        if counter <= 0.1:
-            self.logger.debug(f"FAIL, sum less or equa1 0.1. {cord}:{cord_pos} sum: {counter}")
-        if counter > 1.1:
-            self.logger.debug(f"FAIL, sum greater than 1 by 0.1. {cord}:{cord_pos} sum: {counter}")
-        if (not (counter <= 0.1)) and (not (counter > 1.1)):
-            return True
-        else:
-            return False
 
     def get_net_configuration(self):
         return {"a": self.a, "b": self.b, "c": self.c, "d": self.d, "u0": self.u0,
                 "size_adj": self.size_adj, "timestep": self.timestep}
 
     def get_net_state(self):
-        return {"activations": self.activations(), "inputs": self.inputs,
-                "inputsChange": self.inputsChange}
+        return {"activations": self.activations(), "inputs": self.inputs.tolist(),
+                "inputsChange": self.inputs_change.tolist()}
