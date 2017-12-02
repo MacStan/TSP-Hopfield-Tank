@@ -4,14 +4,23 @@ from main import run, RunParams
 from input import read_data
 from args_parse import get_args
 from data_storage import *
-
+import os, re
+from pathlib import Path
 def run_wrapper(argList):
     run(argList[0], argList[1])
 
 def main(flag, args ):
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    print(dir_path)
+
+    dir_path = re.sub("/src$","", dir_path)
+    dir_path = re.sub(r"\\src$", "", dir_path)
+    os.chdir(dir_path)
+
     if not flag:
         args = get_args()
-    data = read_data("./input_data/burma14.txt")
+    data = read_data("./src/input_data/burma14.txt")
     processInputArgs = []
     dataStore = DataStorage()
     runIndex = 0
