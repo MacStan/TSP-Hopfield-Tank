@@ -8,9 +8,8 @@ from data_storage import *
 def run_wrapper(argList):
     run(argList[0], argList[1])
 
-def main():
+def main(args = get_args()):
     data = read_data("./input_data/burma14.txt")
-    args = get_args()
     processInputArgs = []
     dataStore = DataStorage()
     runIndex = 0
