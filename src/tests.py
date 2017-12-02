@@ -76,8 +76,11 @@ class TestHopfield(unittest.TestCase):
 
     def test_functional(self):
         main(True, Namespace(seeds=[1], size_adjs=[0], steps=50, freq=10, tag='UNITTEST', video = False, plot = True))
-        print(os.path.dirname(os.path.realpath(__file__)))
+        print("After main")
+        print(os.getcwd())
+        print(os.listdir('.'))
         dirs = os.listdir("../plots")
+        print(dirs)
         valid_dirs = [x for x in dirs if "UNITTEST" in x]
 
         for dir in valid_dirs:
