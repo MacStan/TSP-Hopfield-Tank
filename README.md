@@ -4,7 +4,7 @@
 * Hopfield-Tank network
 * 'Heatmap image' generation for given step
 * 'Heatmap over time' video generation (very usefull for debuging)
-![Alt Text](https://github.com/MacStan/TSP-Hopfield-Tank/blob/master/res/output.gif)
+![Heatmaps over time](https://github.com/MacStan/TSP-Hopfield-Tank/blob/master/res/output.gif)
 
 ## Deployment
 ### Running
@@ -23,6 +23,7 @@ Properties of the network can be configured with arguments
 ```
 ### Dependancies
 * Matplotlib 
+* numpy
 * ffmpeg 
 
 
