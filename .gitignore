@@ -5,8 +5,8 @@
 # *.[oa]
 # *~
 *.log
-src/__pycache__*
+*__pycache__*
 .idea*
-src/logs/*
+*logs/*
 plots/*
 data/*

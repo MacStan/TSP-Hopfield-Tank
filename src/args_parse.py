@@ -13,5 +13,9 @@ def get_args():
                         help='specifies value of size adjustment')
     parser.add_argument('--tag', nargs='?', default="", type=str,
                         help='tag added to name')
+    parser.add_argument('--video', action='store_true',
+                        help='If specified will force images creation, and will produce video')
+    parser.add_argument('--images', action='store_true',
+                        help='If specified, images will be created')
     args = parser.parse_args()
     return args

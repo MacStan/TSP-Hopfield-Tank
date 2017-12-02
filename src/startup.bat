@@ -1,1 +1,0 @@
-start cmd /k echo python runner.py --seeds 1 --size-adjs 1.5 --steps 300 --freq 20

@@ -1,9 +1,7 @@
-import math
 import unittest
-import numpy as np
-import hopfield_np as hop
 
-from src import input
+import hopfield.hopfield_np as hop
+import numpy as np
 
 
 class TestHopfieldNumpy(unittest.TestCase):
