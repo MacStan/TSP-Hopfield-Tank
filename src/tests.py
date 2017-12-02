@@ -74,7 +74,7 @@ class TestHopfield(unittest.TestCase):
             for y in range(0, len(matrix)):
                 self.assertAlmostEqual(net.inputs[x][y], 1 / 9, 3)
 
-    def test_functional(self):
+    def functional(self):
         main(True, Namespace(seeds=[1], size_adjs=[0], steps=50, freq=10, tag='UNITTEST', video = False, plot = True))
         print("After main")
         print(os.getcwd())
