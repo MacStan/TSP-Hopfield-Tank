@@ -5,7 +5,7 @@ from storage.run_store_handle import RunStoreHandle
 
 
 class DataStorage:
-    def __init__(self, data_storage_path=f"../data"):
+    def __init__(self, data_storage_path=f"./data"):
         seriesTimestamp = dt.datetime.now().strftime("%H-%M-%S_%d-%m-%Y")
         self.seriesStoragePath = os.path.join(data_storage_path, f"{seriesTimestamp}")
         self.recordedRuns = {}

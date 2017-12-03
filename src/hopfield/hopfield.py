@@ -26,7 +26,7 @@ class HopfieldNet:
             os.makedirs("./logs")
         self.logger = lg.getLogger('HopfieldNet')
         lg.basicConfig(
-            filename=f'../../logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
+            filename=f'./logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
             level=lg.INFO)
 
     def init_inputs(self):
