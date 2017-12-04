@@ -1,11 +1,12 @@
 import random
-import logging as lg
-import datetime as dt
+
 import numpy as np
+
+from running.paths import Paths
 
 
 class HopfieldNet:
-    def __init__(self, distances, seed, size_adj):
+    def __init__(self, distances, seed, size_adj, paths: Paths):
         self.seed = seed
         random.seed(self.seed)
 
@@ -25,10 +26,6 @@ class HopfieldNet:
         self.size_adj = size_adj
 
         self.inputs = self.init_inputs()
-        self.logger = lg.getLogger('HopfieldNet')
-        lg.basicConfig(
-            filename=f'./logs/example-{str(dt.datetime.now().strftime("%Y%m%d-%H%M%S"))}.log',
-            level=lg.INFO)
 
     def init_inputs(self):
         base = np.ones([self.size, self.size], float)
