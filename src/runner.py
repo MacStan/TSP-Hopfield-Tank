@@ -15,7 +15,7 @@ def run_wrapper(arg_list):
 
 def main():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print(root)
+    print("Root at: " + root)
     paths = Paths(root)
     data = read_data(fr"{paths.input()}\burma14.txt")
     args = get_args()
