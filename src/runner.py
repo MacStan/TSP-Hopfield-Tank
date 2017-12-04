@@ -1,8 +1,11 @@
+import os
 from multiprocessing import Pool
 
-from args_parse import get_args
+from running.args_parse import get_args
+from running.main import run, RunParams
+
 from hopfield.input import read_data
-from main import run, run_params
+from running.paths import Paths
 from storage.data_storage import *
 
 
@@ -11,17 +14,21 @@ def run_wrapper(arg_list):
 
 
 def main():
-    data = read_data(f"./input_data/burma14.txt")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print("Root at: " + root)
+    paths = Paths(root)
+    data = read_data(fr"{paths.input()}\burma14.txt")
     args = get_args()
     process_input_args = []
-    data_store = DataStorage()
+    data_store = DataStorage(paths.results(), args.tag)
 
     run_index = 0
     for seed in args.seeds:
         for size_adj in args.size_adjs:
             process_input_args.append([
-                run_params(
-                    seed, args.steps, size_adj, data, args.freq, args.tag, args.images, args.video),
+                RunParams(
+                    seed, args.steps, size_adj, data, args.freq, args.tag, args.images, args.video,
+                    paths),
                 data_store.open_run_store(run_index)])
             run_index += 1
 

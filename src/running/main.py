@@ -3,11 +3,12 @@ import time
 
 from hopfield.hopfield_np import HopfieldNet
 from hopfield.input import distance_matrix, normalize, normalize_cords
+from running.paths import Paths
 from storage.image_generator import GraphicalGenerator
 
 
-class run_params:
-    def __init__(self, seed, steps, size_adj, data, freq, tag, do_images, do_video):
+class RunParams:
+    def __init__(self, seed, steps, size_adj, data, freq, tag, do_images, do_video, paths: Paths):
         self.seed = seed
         self.steps = steps
         self.size_adj = size_adj
@@ -16,9 +17,10 @@ class run_params:
         self.tag = tag
         self.do_images = do_images
         self.do_video = do_video
+        self.paths = paths
 
 
-def run(params: run_params, run_store):
+def run(params: RunParams, run_store):
     net, normalized_distances = initialize(params)
     run_store.store_net_config(net.get_net_configuration())
     graphical_generator = GraphicalGenerator(run_store)
@@ -28,7 +30,8 @@ def run(params: run_params, run_store):
     print("\nAnnealing done!\n")
 
     if params.do_images or params.do_video:
-        graphical_generator.generate_run_images(params, normalize_cords(params.data), normalized_distances)
+        graphical_generator.generate_run_images(params, normalize_cords(params.data),
+                                                normalized_distances)
     if params.do_video:
         graphical_generator.generate_run_video(params)
 
@@ -36,10 +39,10 @@ def run(params: run_params, run_store):
 
 
 def initialize(params):
-    print(
-        f"Seed: {params.seed}; Steps: {params.steps}; Size_Adj: {params.size_adj}; Freq: {params.freq}")
+    print(f"Seed: {params.seed}; Steps: {params.steps}; "
+          f"Size_Adj: {params.size_adj}; Freq: {params.freq}")
     normalized_distances = normalize(distance_matrix(params.data))
-    net = HopfieldNet(normalized_distances, params.seed, params.size_adj)
+    net = HopfieldNet(normalized_distances, params.seed, params.size_adj, params.paths)
 
     return net, normalized_distances
 

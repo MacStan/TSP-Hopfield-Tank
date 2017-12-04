@@ -1,13 +1,20 @@
 import unittest
-
+from os.path import dirname, abspath
 import hopfield.hopfield_np as hop
 import numpy as np
+from running.paths import Paths
 
 
 class TestHopfieldNumpy(unittest.TestCase):
+    def setUp(self):
+        self.paths = Paths(dirname(dirname(dirname(abspath(__file__)))))
+
+    def tearDown(self):
+        self.paths = None
+
     def test_inputs_init(self):
         data = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
-        net = hop.HopfieldNet(data, 1, 0)
+        net = hop.HopfieldNet(data, 1, 0, self.paths )
         for x in range(0, len(data)):
             for y in range(0, len(data)):
                 self.assertAlmostEqual(net.inputs[x][y], 1 / 9, 2)
@@ -18,7 +25,7 @@ class TestHopfieldNumpy(unittest.TestCase):
             [3, -1, 0],
             [0, 0, 0]
         ])
-        net = hop.HopfieldNet(data, 1, 0)
+        net = hop.HopfieldNet(data, 1, 0, self.paths)
         acts = net.activation(data[0, :])
         self.assertAlmostEqual(acts[0], 0, 1)
         self.assertAlmostEqual(acts[1], 0.5, 1)
@@ -40,7 +47,7 @@ class TestHopfieldNumpy(unittest.TestCase):
             [3, -1, 0],
             [0, 0, 0]
         ])
-        net = hop.HopfieldNet(data, 1, 0)
+        net = hop.HopfieldNet(data, 1, 0, self.paths)
         self.assertEqual(np.sum(net.activation(data[0, :])), 1.5, 6)
         self.assertEqual(np.sum(net.activation(data[1, :])), 1.5, 6)
         self.assertEqual(np.sum(net.activation(data[:, 0])), 1.5, 6)
@@ -51,7 +58,7 @@ class TestHopfieldNumpy(unittest.TestCase):
             [3, -1, 0],
             [0, 0, 0]
         ])
-        net = hop.HopfieldNet(data, 1, 0)
+        net = hop.HopfieldNet(data, 1, 0, self.paths)
         b = net.activation(net.inputs[0, 1])
         c = net.activation(net.inputs[0, 2])
         self.assertAlmostEqual(net.get_a(0, 0), (b + c) * net.a, 6)
@@ -62,7 +69,7 @@ class TestHopfieldNumpy(unittest.TestCase):
             [0.01, 0.1, 1],
             [-0.1, 0, 0.1]
         ])
-        net = hop.HopfieldNet(data, 1, 0)
+        net = hop.HopfieldNet(data, 1, 0, self.paths)
         b = net.activation(net.inputs[0, 0])
         c = net.activation(net.inputs[2, 0])
         self.assertAlmostEqual(net.get_b(1, 0), (b + c) * net.b, 6)
@@ -73,7 +80,7 @@ class TestHopfieldNumpy(unittest.TestCase):
             [0.01, 0.1, 1],
             [-0.1, 0, 0.1]
         ])
-        net = hop.HopfieldNet(data, 1, 0)
+        net = hop.HopfieldNet(data, 1, 0, self.paths)
         manual_sum = 0.0
         manual_sum += net.activation(net.inputs[0, 0])
         manual_sum += net.activation(net.inputs[0, 1])
@@ -88,23 +95,23 @@ class TestHopfieldNumpy(unittest.TestCase):
         manual_sum *= net.c
         self.assertAlmostEqual(net.get_c(), manual_sum, 6)
 
-
     def test_get_d(self):
         data = np.array([
-            [0, 0.25, 0.8],
-            [0.25, 0, 1],
-            [0.8, 1, 0]
+            [0, 0.25, 0.8], [0.25, 0, 1], [0.8, 1, 0]
         ])
-        net = hop.HopfieldNet(data, 1, 0)
-        city1 = (net.activation(net.inputs[0, 0]) + net.activation(net.inputs[0, 2])) * net.distances[
-            1, 0]
-        city2 = (net.activation(net.inputs[1, 0]) + net.activation(net.inputs[1, 2])) * net.distances[
-            1, 1]
-        city3 = (net.activation(net.inputs[2, 0]) + net.activation(net.inputs[2, 2])) * net.distances[
-            1, 2]
+        net = hop.HopfieldNet(data, 1, 0, self.paths)
+        city1 = (net.activation(net.inputs[0, 0])
+                 + net.activation(net.inputs[0, 2])) * net.distances[
+                    1, 0]
+        city2 = (net.activation(net.inputs[1, 0])
+                 + net.activation(net.inputs[1, 2])) * net.distances[
+                    1, 1]
+        city3 = (net.activation(net.inputs[2, 0])
+                 + net.activation(net.inputs[2, 2])) * net.distances[
+                    1, 2]
 
         manual_sum = (city1 + city2 + city3) * net.d
-        self.assertEqual(net.get_d(1, 1), manual_sum )
+        self.assertEqual(net.get_d(1, 1), manual_sum)
 
 
 if __name__ == '__main__':

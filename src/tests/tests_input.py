@@ -1,11 +1,9 @@
 import math
 import unittest
-
-from hopfield.hopfield import HopfieldNet
 from hopfield.input import *
 
-
 class TestInput(unittest.TestCase):
+
     def test_three_points(self):
         matrix = distance_matrix([(0, 0), (0, 2), (4, 0)])
         self.assertAlmostEqual(matrix[0][0], 0.0)
@@ -61,15 +59,6 @@ class TestInput(unittest.TestCase):
         self.assertAlmostEqual(matrix[2][0], 0.7)
         self.assertAlmostEqual(matrix[2][1], 0.8)
         self.assertAlmostEqual(matrix[2][2], 1.0)
-
-
-class TestHopfield(unittest.TestCase):
-    def test_inputs_init(self):
-        matrix = [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
-        net = HopfieldNet(matrix, 1, 0)
-        for x in range(0, len(matrix)):
-            for y in range(0, len(matrix)):
-                self.assertAlmostEqual(net.inputs[x][y], 1 / 9, 3)
 
 
 if __name__ == '__main__':
