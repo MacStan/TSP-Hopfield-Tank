@@ -2,10 +2,18 @@ import matplotlib.pyplot as plt
 
 
 class Plotter:
-    def __init__(self, subplots):
+    def __init__(self, subplots, title, path):
         self.fig = plt.figure(figsize=(30, 10), dpi=50)
         self.subplot = 1
         self.expected_subplots = subplots
+        self.title = title
+        self.path = path
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.plot()
 
     def add_subplot(self, points, cmap, vmin, vmax, title):
         self.fig.add_subplot(1, self.expected_subplots, self.subplot)
@@ -32,7 +40,7 @@ class Plotter:
             splot.set_xlim(min([p[0] for p in points]), max([p[0] for p in points]))
             splot.set_ylim(min([p[1] for p in points]), max([p[1] for p in points]))
 
-    def plot(self, title, path):
-        plt.suptitle(title)
-        plt.savefig(path)
+    def plot(self):
+        plt.suptitle(self.title)
+        plt.savefig(self.path)
         plt.close()
