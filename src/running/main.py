@@ -1,5 +1,6 @@
 import sys
 import time
+import os
 
 from hopfield.hopfield_np import HopfieldNet
 from hopfield.input import distance_matrix, normalize, normalize_cords
@@ -20,10 +21,11 @@ class RunParams:
         self.paths = paths
 
 
-def run(params: RunParams, run_store):
+def run(params: RunParams, run_store, root_path):
     net, normalized_distances = initialize(params)
     run_store.store_net_config(net.get_net_configuration())
-    graphical_generator = GraphicalGenerator(run_store)
+    graphical_generator = GraphicalGenerator(run_store,
+                                             os.path.join(root_path, "ffmpeg"))
 
     print("\nAnnealing network")
     optimize_network(run_store, params.freq, net, params.steps)

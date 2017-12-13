@@ -7,12 +7,13 @@ from storage.plotter import Plotter
 
 
 class GraphicalGenerator:
-    def __init__(self, runStore):
+    def __init__(self, runStore, ffmpeg_path):
         self.runStore = runStore
+        self.ffmpeg_path = ffmpeg_path
 
     def generate_run_video(self, params):
         print("\nCreating video with ffmpeg")
-        ffmpeg_command = f"ffmpeg -loglevel panic -r 10 -i {self.runStore.get_image_path_regexp()} " \
+        ffmpeg_command = f"{self.ffmpeg_path} -loglevel panic -r 10 -i {self.runStore.get_image_path_regexp()} " \
                          f"-vframes {int(params.steps/params.freq)} {self.runStore.get_video_path()}"
 
         sp.call(ffmpeg_command, stdout=open(os.devnull, 'wb'))

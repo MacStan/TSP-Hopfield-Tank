@@ -10,7 +10,7 @@ from storage.data_storage import *
 
 
 def run_wrapper(arg_list):
-    run(arg_list[0], arg_list[1])
+    run(arg_list[0], arg_list[1], arg_list[2])
 
 
 def main():
@@ -29,7 +29,8 @@ def main():
                 RunParams(
                     seed, args.steps, size_adj, data, args.freq, args.tag, args.images, args.video,
                     paths),
-                data_store.open_run_store(run_index)])
+                data_store.open_run_store(run_index),
+                root])
             run_index += 1
 
     pool = Pool()
